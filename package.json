@@ -1,5 +1,5 @@
 {
-  "name": "javascript-project-boilerplate",
+  "name": "parse-xml",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,15 +9,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/JamesRobertHugginsNgo/javascript-project-boilerplate.git"
+    "url": "git+https://github.com/JamesRobertHugginsNgo/parse-xml.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/JamesRobertHugginsNgo/javascript-project-boilerplate/issues"
+    "url": "https://github.com/JamesRobertHugginsNgo/parse-xml/issues"
   },
-  "homepage": "https://github.com/JamesRobertHugginsNgo/javascript-project-boilerplate#readme",
+  "homepage": "https://github.com/JamesRobertHugginsNgo/parse-xml#readme",
   "devDependencies": {
     "@babel/core": "^7.17.8",
     "@babel/eslint-parser": "^7.17.0",
