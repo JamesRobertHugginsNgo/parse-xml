@@ -16,12 +16,12 @@ const parseXml = (() => {
 	}
 
 	function processTag(string) {
-		const openTagStartIndex = string.charAt(1) === '?' ? 2 : 1;
+		const openTagContentStartIndex = string.charAt(1) === '?' ? 2 : 1;
 		const openTagEndIndex = string.indexOf('>');
-		const isContainer = (openTagStartIndex === 1 && string.charAt(openTagEndIndex - 1) !== '/')
-			|| (openTagStartIndex === 2 && string.charAt(openTagEndIndex - 1) !== '?');
+		const isContainer = (openTagContentStartIndex === 1 && string.charAt(openTagEndIndex - 1) !== '/')
+			|| (openTagContentStartIndex === 2 && string.charAt(openTagEndIndex - 1) !== '?');
 		const openTagContentEndIndex = isContainer ? openTagEndIndex : openTagEndIndex - 1;
-		const tagContent = string.substring(openTagStartIndex, openTagContentEndIndex);
+		const tagContent = string.substring(openTagContentStartIndex, openTagContentEndIndex);
 
 		const spaceIndexes = [];
 		let quote = null;
@@ -56,7 +56,7 @@ const parseXml = (() => {
 			name: tagItems.shift()
 		};
 
-		if (openTagStartIndex === 2) {
+		if (openTagContentStartIndex === 2) {
 			node.isDeclaration = true;
 		}
 
