@@ -1,0 +1,14 @@
+{
+    "env": {
+        "browser": true,
+        "commonjs": false,
+        "node": false
+    },
+    "parser": "@babel/eslint-parser",
+    "parserOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module"
+    },
+    "rules": {
+    }
+}
