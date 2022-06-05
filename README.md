@@ -12,7 +12,7 @@ const input = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fi
 
 const output = parseXml(input);
 
-console.log(JSON.stringify(output, null, '\t'));
+console.log(JSON.stringify(output, null, 2));
 ```
 
 Output
