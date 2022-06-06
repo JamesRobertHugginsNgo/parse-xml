@@ -15,14 +15,7 @@ const parseXml = (() => {
 		};
 	}
 
-	function processTag(string) {
-		const openTagContentStartIndex = string.charAt(1) === '?' ? 2 : 1;
-		const openTagEndIndex = string.indexOf('>');
-		const isContainer = (openTagContentStartIndex === 1 && string.charAt(openTagEndIndex - 1) !== '/')
-			|| (openTagContentStartIndex === 2 && string.charAt(openTagEndIndex - 1) !== '?');
-		const openTagContentEndIndex = isContainer ? openTagEndIndex : openTagEndIndex - 1;
-		const tagContent = string.substring(openTagContentStartIndex, openTagContentEndIndex);
-
+	function processTagContent(tagContent) {
 		const spaceIndexes = [];
 		let quote = null;
 		for (let index = 0, length = tagContent.length; index < length; index++) {
@@ -56,10 +49,6 @@ const parseXml = (() => {
 			name: tagItems.shift()
 		};
 
-		if (openTagContentStartIndex === 2) {
-			node.isDeclaration = true;
-		}
-
 		if (tagItems.length !== 0) {
 			node.attributes = tagItems.reduce((acc, cur) => {
 				const [name, value] = cur.split('=');
@@ -67,6 +56,15 @@ const parseXml = (() => {
 				return acc;
 			}, {});
 		}
+
+		return node;
+	}
+
+	function processTag(string) {
+		const openTagEndIndex = string.indexOf('>');
+		const isContainer = string.charAt(openTagEndIndex - 1) !== '/';
+		const openTagContentEndIndex = isContainer ? openTagEndIndex : openTagEndIndex - 1;
+		const node = processTagContent(string.substring(1, openTagContentEndIndex));
 
 		string = string.substring(openTagEndIndex + 1);
 
@@ -82,18 +80,29 @@ const parseXml = (() => {
 		};
 	}
 
+	function processDeclaration(string) {
+		const openTagEndIndex = string.indexOf('>');
+		return {
+			node: {
+				...processTagContent(string.substring(2, openTagEndIndex - 1)),
+				isDeclaration: true
+			},
+			string: string.substring(openTagEndIndex + 1)
+		};
+	}
+
 	function processChildren(string) {
 		const nodes = [];
-
 		while (string.length > 0 && !(string.charAt(0) === '<' && string.charAt(1) === '/')) {
 			const { node, string: newString } = string.charAt(0) === '<'
-				? processTag(string)
+				? string.charAt(1) === '?'
+					? processDeclaration(string)
+					: processTag(string)
 				: processText(string);
 
 			nodes.push(node);
 			string = newString;
 		}
-
 		return { nodes, string };
 	}
 

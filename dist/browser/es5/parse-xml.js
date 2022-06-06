@@ -1,5 +1,11 @@
 "use strict";
 
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -29,12 +35,7 @@ var parseXml = function () {
     };
   }
 
-  function processTag(string) {
-    var openTagStartIndex = string.charAt(1) === '?' ? 2 : 1;
-    var openTagEndIndex = string.indexOf('>');
-    var isContainer = openTagStartIndex === 1 && string.charAt(openTagEndIndex - 1) !== '/' || openTagStartIndex === 2 && string.charAt(openTagEndIndex - 1) !== '?';
-    var openTagContentEndIndex = isContainer ? openTagEndIndex : openTagEndIndex - 1;
-    var tagContent = string.substring(openTagStartIndex, openTagContentEndIndex);
+  function processTagContent(tagContent) {
     var spaceIndexes = [];
     var quote = null;
 
@@ -73,10 +74,6 @@ var parseXml = function () {
       name: tagItems.shift()
     };
 
-    if (openTagStartIndex === 2) {
-      node.isDeclaration = true;
-    }
-
     if (tagItems.length !== 0) {
       node.attributes = tagItems.reduce(function (acc, cur) {
         var _cur$split = cur.split('='),
@@ -89,6 +86,14 @@ var parseXml = function () {
       }, {});
     }
 
+    return node;
+  }
+
+  function processTag(string) {
+    var openTagEndIndex = string.indexOf('>');
+    var isContainer = string.charAt(openTagEndIndex - 1) !== '/';
+    var openTagContentEndIndex = isContainer ? openTagEndIndex : openTagEndIndex - 1;
+    var node = processTagContent(string.substring(1, openTagContentEndIndex));
     string = string.substring(openTagEndIndex + 1);
 
     if (isContainer) {
@@ -106,11 +111,21 @@ var parseXml = function () {
     };
   }
 
+  function processDeclaration(string) {
+    var openTagEndIndex = string.indexOf('>');
+    return {
+      node: _objectSpread(_objectSpread({}, processTagContent(string.substring(2, openTagEndIndex - 1))), {}, {
+        isDeclaration: true
+      }),
+      string: string.substring(openTagEndIndex + 1)
+    };
+  }
+
   function processChildren(string) {
     var nodes = [];
 
     while (string.length > 0 && !(string.charAt(0) === '<' && string.charAt(1) === '/')) {
-      var _ref = string.charAt(0) === '<' ? processTag(string) : processText(string),
+      var _ref = string.charAt(0) === '<' ? string.charAt(1) === '?' ? processDeclaration(string) : processTag(string) : processText(string),
           node = _ref.node,
           newString = _ref.string;
 
