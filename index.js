@@ -1,1 +1,1 @@
-module.exports = require('./dist/node/namespace.js');
+module.exports = require('./dist/node/parse-xml.js');
