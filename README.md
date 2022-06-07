@@ -2,6 +2,12 @@
 
 A simple XML parser from string to JSON.
 
+## Installation
+
+``` console
+npm install https://github.com/JamesRobertHugginsNgo/parse-xml.git#1.0.1
+```
+
 ## Usage
 
 ``` JavaScript
